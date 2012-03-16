@@ -6,7 +6,7 @@ BinData.js aims to be a very close port of [Ruby's BinData library](http://binda
 
 ## Examples
 
-** Data record definition **
+**Data record definition**
 
 ``` coffeescript
 class Rectangle extends BinData.Record
@@ -18,7 +18,7 @@ class Rectangle extends BinData.Record
     @uint32 "height"
 ```
 
-** Reading a data record **
+**Reading a data record**
 
 ``` coffeescript
 file = new BinData.File("/path/to/file")
