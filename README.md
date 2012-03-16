@@ -11,7 +11,7 @@ BinData.js aims to be a very close port of [Ruby's BinData library](http://binda
 ``` coffeescript
 class Rectangle extends BinData.Record
   endian: "little"
-  parse: ->
+  define: ->
     @uint16 "len"
     @string "name", readLength: len
     @uint32 "width"
@@ -21,7 +21,8 @@ class Rectangle extends BinData.Record
 **Reading a data record**
 
 ``` coffeescript
-file = new BinData.File("/path/to/file")
-r = Rectangle.read file
+file = BinData.File.open("/path/to/file")
+r = new Rectangle(file)
+r.read()
 
 console.log "Rectangle #{r.name} is #{r.width} x #{r.height}"
