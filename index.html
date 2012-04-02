@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Bindata.js by meltingice</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Bindata.js</h1>
+        <h2>A structured and understandable way to read/write binary data in Javascript. Inspired by Ruby BinData.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/meltingice/bindata.js/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/meltingice/bindata.js/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/meltingice/bindata.js" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <p>BinData.js is a simple and structured way to read and write binary data. Instead of having to remember a whole table of obscure character codes, you can write and encapsulate chunks of binary data together with ease.</p>
+
+<p>BinData.js aims to be a very close port of <a href="http://bindata.rubyforge.org/">Ruby's BinData library</a>.</p>
+
+<h3>Examples</h3>
+
+<p><strong>Data record definition</strong></p>
+
+<div class="highlight">
+<pre><span class="k">class</span> <span class="nx">Rectangle</span> <span class="k">extends</span> <span class="nx">BinData</span><span class="p">.</span><span class="nx">Record</span>
+  <span class="nv">endian: </span><span class="s">"little"</span>
+  <span class="nv">define: </span><span class="o">-&gt;</span>
+    <span class="nx">@uint16</span> <span class="s">"len"</span>
+    <span class="nx">@string</span> <span class="s">"name"</span><span class="p">,</span> <span class="nv">readLength: </span><span class="nx">len</span>
+    <span class="nx">@uint32</span> <span class="s">"width"</span>
+    <span class="nx">@uint32</span> <span class="s">"height"</span>
+</pre>
+</div>
+
+
+<p><strong>Reading a data record</strong></p>
+
+<div class="highlight">
+<pre><span class="nv">file = </span><span class="nx">BinData</span><span class="p">.</span><span class="nx">File</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s">"/path/to/file"</span><span class="p">)</span>
+<span class="nv">r = </span><span class="k">new</span> <span class="nx">Rectangle</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span>
+<span class="nx">r</span><span class="p">.</span><span class="nx">read</span><span class="p">()</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">"Rectangle </span><span class="si">#{</span><span class="nx">r</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="s"> is </span><span class="si">#{</span><span class="nx">r</span><span class="p">.</span><span class="nx">width</span><span class="si">}</span><span class="s"> x </span><span class="si">#{</span><span class="nx">r</span><span class="p">.</span><span class="nx">height</span><span class="si">}</span><span class="s">"</span>
+</pre>
+</div>
+
+      </section>
+    </div>
+
+    
+  </body>
+</html>
