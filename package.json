@@ -1,6 +1,6 @@
 {
   "name": "bindata",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A structured and understandable way to read/write binary data in Javascript. Inspired by Ruby BinData.",
   "keywords": ["bindata", "binary", "file", "read", "write", "parse"],
   "homepage": "http://meltingice.github.com/bindata.js/",
