@@ -120,7 +120,7 @@ task 'compile', 'Compile all CoffeeScript source files', (opts) ->
       exec "./node_modules/.bin/coffee #{coffeeCoreOpts}", (err, stdout, stderr) ->
         util.log err if err
         util.log "Compiled #{targetCoreJS}"
-        #fs.unlink "#{targetCoffee}.coffee"
+        fs.unlink "#{targetCoffee}.coffee"
 
         finished('js')
         
