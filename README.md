@@ -4,7 +4,7 @@ BinData.js is a simple and structured way to read and write binary data. Instead
 
 BinData.js aims to be a very close port of [Ruby's BinData library](http://bindata.rubyforge.org/).
 
-## Instalation
+## Installation
 
 BinData.js is available in npm. Simply run in your project directory:
 
