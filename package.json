@@ -1,0 +1,20 @@
+{
+  "name": "bindata.js",
+  "version": "0.0.1",
+  "description": "A structured and understandable way to read/write binary data in Javascript. Inspired by Ruby BinData.",
+  "homepage": "http://meltingice.github.com/bindata.js/",
+  "author": "Ryan LeFevre <meltingice8917@gmail.com> (http://meltingice.net/)",
+  "main": "./lib/bindata.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/meltingice/bindata.js.git"
+  },
+  "devDependencies": {
+    "jsmin": "1.0.1",
+    "coffee-script": "> 1.1.0",
+    "coffeescript-growl": "git://github.com/jawj/coffeescript-growl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/meltingice/bindata.js/issues"
+  }
+}
