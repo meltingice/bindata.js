@@ -1,0 +1,33 @@
+<!DOCTYPE html>  <html> <head>   <title>datatype.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="bindata.html">                 bindata.coffee               </a>                                           <a class="source" href="datatype.html">                 datatype.coffee               </a>                                           <a class="source" href="file.html">                 file.coffee               </a>                                           <a class="source" href="log.html">                 log.coffee               </a>                                           <a class="source" href="record.html">                 record.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               datatype.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nv">BinData.DataType = </span><span class="k">class</span> <span class="nx">DataType</span>
+  <span class="nv">opts = </span><span class="p">{}</span>
+  <span class="nv">defaults:</span>
+    <span class="nv">endian: </span><span class="s2">&quot;native&quot;</span>
+    <span class="nv">initialValue: </span><span class="kc">null</span>
+    <span class="nv">length: </span><span class="kc">null</span>
+
+  <span class="nv">data: </span><span class="kc">null</span>
+
+  <span class="nv">constructor: </span><span class="nf">(options = {}) -&gt;</span>
+    <span class="vi">@opts = </span><span class="nx">_</span><span class="p">.</span><span class="nx">defaults</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">@defaults</span><span class="p">,</span> <span class="nx">@opts</span>
+
+    <span class="vi">@e = </span><span class="k">switch</span> <span class="nx">@opts</span><span class="p">.</span><span class="nx">endian</span>
+      <span class="k">when</span> <span class="s2">&quot;native&quot;</span> <span class="k">then</span> <span class="s2">&quot;@&quot;</span>
+      <span class="k">when</span> <span class="s2">&quot;native-standard&quot;</span> <span class="k">then</span> <span class="s2">&quot;=&quot;</span>
+      <span class="k">when</span> <span class="s2">&quot;little&quot;</span> <span class="k">then</span> <span class="s2">&quot;&lt;&quot;</span>
+      <span class="k">when</span> <span class="s2">&quot;big&quot;</span> <span class="k">then</span> <span class="s2">&quot;&gt;&quot;</span>
+
+    <span class="vi">@data = </span><span class="nx">@opts</span><span class="p">.</span><span class="nx">initialValue</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>This does nothing by default. Override it.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">read: </span><span class="nf">(data) -&gt;</span> <span class="vi">@data = </span><span class="nx">data</span>
+
+  <span class="nv">readFormat: </span><span class="nf">(format, data) -&gt;</span>
+    <span class="nv">file = </span><span class="k">new</span> <span class="nx">File</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="vi">@data = </span><span class="nx">file</span><span class="p">.</span><span class="nx">readf</span> <span class="nx">format</span>
+
+  <span class="nv">assign: </span><span class="nf">(value) -&gt;</span> <span class="vi">@data = </span><span class="nx">value</span>
+  <span class="nv">clear: </span><span class="o">-&gt;</span> <span class="vi">@data = </span><span class="nx">@opts</span><span class="p">.</span><span class="nx">initialValue</span>
+  <span class="nv">isClear: </span><span class="o">-&gt;</span> <span class="nx">@data</span> <span class="o">is</span> <span class="nx">@opts</span><span class="p">.</span><span class="nx">initialValue</span>
+
+  <span class="nv">numBytes: </span><span class="o">-&gt;</span> <span class="c1"># Override this.</span>
+  <span class="nv">snapshot: </span><span class="o">-&gt;</span> <span class="nx">@data</span>
+  <span class="nv">toString: </span><span class="o">-&gt;</span> <span class="nx">@data</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
