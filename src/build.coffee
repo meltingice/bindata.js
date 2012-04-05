@@ -401,61 +401,49 @@ BinData.File = class File
 
  class BinData.Record
   endian: "native"
-  data: {}
+  _data: {}
 
-  constructor: (@file) ->
+  @registerType: (funcNames, cb) ->
+    unless typeof funcNames is "object" and funcNames.length?
+      funcNames = [funcNames]
+
+    Record::[funcName] = cb for funcName in funcNames
+
+  # Nested Record
+  @registerRecord: (funcNames, record, cb) ->
+    unless typeof funcNames is "object" and funcNames.length?
+      funcNames = [funcNames]
+
+    for funcName in funcNames
+      Record::[funcName] = (name) ->
+        r = new record(@file, @endian)
+        r.read()
+        
+        @setData name, cb(r)
+
+  constructor: (@file, endian = null) ->
+    @endian = endian if endian?
 
   define: ->
 
   read: -> @define()
   write: -> @define()
-  toJSON: -> @data
+  toJSON: -> @_data
 
   setData: (name, data) ->
-    @data[name] = data
+    @_data[name] = data
     Object.defineProperty @, name,
-      get: -> @data[name]
-      set: (value) -> @data[name] = value
+      get: -> @_data[name]
+      set: (value) -> @_data[name] = value
 
   readType: (type, name, opts = {}) ->
     _.extend opts, endian: @endian
 
     item = new BinData.Type[type] opts
-    item.read @file.read(item.numBytes())
+    item.read @file.read(item.numBytes(@_data))
     @setData name, item.snapshot()
 
   pad: (bytes) -> @file.read bytes
-
-  char: (name) -> @readType "Char", name
-  uchar: (name) -> @readType "Char", name, unsigned: true
-
-  bool: (name) -> @readType "Bool", name
-
-  short: (name) -> @readType "Short", name
-  ushort: (name) -> @readType "Short", name, unsigned: true
-
-  int: (name) -> @readType "Int", name
-  uint: (name) -> @readType "Int", name, unsigned: true
-
-  long: (name) -> @readType "Long", name
-  ulong: (name) -> @readType "Long", name, unsigned: true
-
-  longlong: (name) -> @readType "LongLong", name
-  ulonglong: (name) -> @readType "LongLong", name, unsigned: true
-
-  float: (name) -> @readType "Float", name
-  double: (name) -> @readType "Double", name
-
-  string: (name, opts = {}) -> @readType "String", name, opts
-  stringz: (name, opts = {}) ->
-
-  # Aliases
-  int8: Record::char
-  uint8: Record::uchar
-  int16: Record::short
-  uint16: Record::ushort
-  int32: Record::int
-  uint32: Record::uint
 
 BinData.DataType = class DataType
   opts = {}
@@ -497,11 +485,12 @@ class BinData.Type.Bool extends BinData.DataType
   read: (data) -> @readFormat "?", data
   numBytes: -> 1
 
+BinData.Record.registerType "bool", (name) -> @readType "Bool", name
 
 
 
 class BinData.Type.Char extends BinData.DataType
-  @opts:
+  opts:
     unsigned: false
 
   read: (data) ->
@@ -513,25 +502,32 @@ class BinData.Type.Char extends BinData.DataType
 
   numBytes: -> 1
 
+BinData.Record.registerType ["char", "int8"], (name) -> 
+  @readType "Bool", name
+
+BinData.Record.registerType ["uchar", "uint8"], (name) -> 
+  @readType "Bool", name, unsigned: true
 
 
 
- class BinData.Type.Double extends BinData.DataType
+class BinData.Type.Double extends BinData.DataType
   read: (data) -> @readFormat "d", data
   numBytes: -> 4
 
+BinData.Record.registerType "double", (name) -> @readType "Double", name
 
 
 
- class BinData.Type.Float extends BinData.DataType
+class BinData.Type.Float extends BinData.DataType
   read: (data) -> @readFormat "f", data
   numBytes: -> 4
 
+BinData.Record.registerType "float", (name) -> @readType "Float", name
 
 
 
 class BinData.Type.Int extends BinData.DataType
-  @opts:
+  opts:
     unsigned: false
 
   read: (data) ->
@@ -543,11 +539,16 @@ class BinData.Type.Int extends BinData.DataType
 
   numBytes: -> 4
 
+BinData.Record.registerType ["int", "int32"], (name) -> 
+  @readType "Int", name
+
+BinData.Record.registerType ["uint", "uint32"], (name) ->
+  @readType "Int", name, unsigned: true
 
 
 
- class BinData.Type.Long extends BinData.DataType
-  @opts:
+class BinData.Type.Long extends BinData.DataType
+  opts:
     unsigned: false
 
   read: (data) ->
@@ -559,11 +560,17 @@ class BinData.Type.Int extends BinData.DataType
 
   numBytes: -> 4
 
+BinData.Record.registerType "long", (name) -> 
+  @readType "Long", name
+
+BinData.Record.registerType "ulong", (name) ->
+  @readType "Long", name, unsigned: true
 
 
 
- class BinData.Type.LongLong extends BinData.DataType
-  @opts:
+
+class BinData.Type.LongLong extends BinData.DataType
+  opts:
     unsigned: false
 
   read: (data) ->
@@ -575,11 +582,26 @@ class BinData.Type.Int extends BinData.DataType
 
   numBytes: -> 8
 
+BinData.Record.registerType "longlong", (name) -> 
+  @readType "LongLong", name
+
+BinData.Record.registerType "ulonglong", (name) -> 
+  @readType "LongLong", name, unsigned: true
 
 
 
- class BinData.Type.Short extends BinData.DataType
-  @opts:
+class PascalString extends BinData.Record
+  define: ->
+    @uint8 "length"
+    @string "str", length: @length
+
+BinData.Record.registerRecord "pascalString", PascalString, (record) ->
+  record.str
+
+
+
+class BinData.Type.Short extends BinData.DataType
+  opts:
     unsigned: false
 
   read: (data) ->
@@ -591,11 +613,16 @@ class BinData.Type.Int extends BinData.DataType
 
   numBytes: -> 2
 
+BinData.Record.registerType ["short", "int16"], (name) -> 
+  @readType "Short", name
+
+BinData.Record.registerType ["ushort", "uint16"], (name) -> 
+  @readType "Short", name
 
 
 
- class BinData.Type.String extends BinData.DataType
-  @opts: 
+class BinData.Type.String extends BinData.DataType
+  opts: 
     length: 4
 
   read: (data) ->
@@ -604,3 +631,5 @@ class BinData.Type.Int extends BinData.DataType
 
   numBytes: -> @opts.length
 
+BinData.Record.registerType "string", (name, opts = {}) -> 
+  @readType "String", name, opts

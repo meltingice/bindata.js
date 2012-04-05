@@ -7,7 +7,6 @@ class PSDHeader extends BinData.Record
 
   define: ->
     @string "signature", length: 4
-    @pad 4
     @short "version"
 
     @uint8  "a"

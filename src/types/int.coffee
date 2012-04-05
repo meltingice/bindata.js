@@ -1,5 +1,5 @@
 class BinData.Type.Int extends BinData.DataType
-  @opts:
+  opts:
     unsigned: false
 
   read: (data) ->
@@ -10,3 +10,9 @@ class BinData.Type.Int extends BinData.DataType
     @readFormat code, data
 
   numBytes: -> 4
+
+BinData.Record.registerType ["int", "int32"], (name) -> 
+  @readType "Int", name
+
+BinData.Record.registerType ["uint", "uint32"], (name) ->
+  @readType "Int", name, unsigned: true

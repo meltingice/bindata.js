@@ -1,5 +1,5 @@
- class BinData.Type.String extends BinData.DataType
-  @opts: 
+class BinData.Type.String extends BinData.DataType
+  opts: 
     length: 4
 
   read: (data) ->
@@ -7,3 +7,6 @@
     @readFormat code, data
 
   numBytes: -> @opts.length
+
+BinData.Record.registerType "string", (name, opts = {}) -> 
+  @readType "String", name, opts
