@@ -1,56 +1,44 @@
 <!DOCTYPE html>  <html> <head>   <title>record.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="bindata.html">                 bindata.coffee               </a>                                           <a class="source" href="datatype.html">                 datatype.coffee               </a>                                           <a class="source" href="file.html">                 file.coffee               </a>                                           <a class="source" href="log.html">                 log.coffee               </a>                                           <a class="source" href="record.html">                 record.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               record.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre> <span class="k">class</span> <span class="nx">BinData</span><span class="p">.</span><span class="nx">Record</span>
   <span class="nv">endian: </span><span class="s2">&quot;native&quot;</span>
-  <span class="nv">data: </span><span class="p">{}</span>
+  <span class="nv">_data: </span><span class="p">{}</span>
 
-  <span class="nv">constructor: </span><span class="nf">(@file) -&gt;</span>
+  <span class="vi">@registerType: </span><span class="nf">(funcNames, cb) -&gt;</span>
+    <span class="nx">unless</span> <span class="k">typeof</span> <span class="nx">funcNames</span> <span class="o">is</span> <span class="s2">&quot;object&quot;</span> <span class="o">and</span> <span class="nx">funcNames</span><span class="p">.</span><span class="nx">length</span><span class="o">?</span>
+      <span class="nv">funcNames = </span><span class="p">[</span><span class="nx">funcNames</span><span class="p">]</span>
+
+    <span class="nx">Record</span><span class="o">::</span><span class="p">[</span><span class="nx">funcName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">cb</span> <span class="k">for</span> <span class="nx">funcName</span> <span class="k">in</span> <span class="nx">funcNames</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Nested Record</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="vi">@registerRecord: </span><span class="nf">(funcNames, record, cb) -&gt;</span>
+    <span class="nx">unless</span> <span class="k">typeof</span> <span class="nx">funcNames</span> <span class="o">is</span> <span class="s2">&quot;object&quot;</span> <span class="o">and</span> <span class="nx">funcNames</span><span class="p">.</span><span class="nx">length</span><span class="o">?</span>
+      <span class="nv">funcNames = </span><span class="p">[</span><span class="nx">funcNames</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="nx">funcName</span> <span class="k">in</span> <span class="nx">funcNames</span>
+      <span class="nx">Record</span><span class="o">::</span><span class="p">[</span><span class="nx">funcName</span><span class="p">]</span> <span class="o">=</span> <span class="nf">(name) -&gt;</span>
+        <span class="nv">r = </span><span class="k">new</span> <span class="nx">record</span><span class="p">(</span><span class="nx">@file</span><span class="p">,</span> <span class="nx">@endian</span><span class="p">)</span>
+        <span class="nx">r</span><span class="p">.</span><span class="nx">read</span><span class="p">()</span>
+        
+        <span class="nx">@setData</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+
+  <span class="nv">constructor: </span><span class="nf">(@file, endian = null) -&gt;</span>
+    <span class="vi">@endian = </span><span class="nx">endian</span> <span class="k">if</span> <span class="nx">endian</span><span class="o">?</span>
 
   <span class="nv">define: </span><span class="o">-&gt;</span>
 
   <span class="nv">read: </span><span class="o">-&gt;</span> <span class="nx">@define</span><span class="p">()</span>
   <span class="nv">write: </span><span class="o">-&gt;</span> <span class="nx">@define</span><span class="p">()</span>
-  <span class="nv">toJSON: </span><span class="o">-&gt;</span> <span class="nx">@data</span>
+  <span class="nv">toJSON: </span><span class="o">-&gt;</span> <span class="nx">@_data</span>
 
   <span class="nv">setData: </span><span class="nf">(name, data) -&gt;</span>
-    <span class="nx">@data</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span>
+    <span class="nx">@_data</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span>
     <span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span> <span class="err">@</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span>
-      <span class="nv">get: </span><span class="o">-&gt;</span> <span class="nx">@data</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span>
-      <span class="nv">set: </span><span class="nf">(value) -&gt;</span> <span class="nx">@data</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
+      <span class="nv">get: </span><span class="o">-&gt;</span> <span class="nx">@_data</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span>
+      <span class="nv">set: </span><span class="nf">(value) -&gt;</span> <span class="nx">@_data</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
 
   <span class="nv">readType: </span><span class="nf">(type, name, opts = {}) -&gt;</span>
     <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">opts</span><span class="p">,</span> <span class="nv">endian: </span><span class="nx">@endian</span>
 
     <span class="nv">item = </span><span class="k">new</span> <span class="nx">BinData</span><span class="p">.</span><span class="nx">Type</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="nx">opts</span>
-    <span class="nx">item</span><span class="p">.</span><span class="nx">read</span> <span class="nx">@file</span><span class="p">.</span><span class="nx">read</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">numBytes</span><span class="p">())</span>
+    <span class="nx">item</span><span class="p">.</span><span class="nx">read</span> <span class="nx">@file</span><span class="p">.</span><span class="nx">read</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">numBytes</span><span class="p">(</span><span class="nx">@_data</span><span class="p">))</span>
     <span class="nx">@setData</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">item</span><span class="p">.</span><span class="nx">snapshot</span><span class="p">()</span>
 
   <span class="nv">pad: </span><span class="nf">(bytes) -&gt;</span> <span class="nx">@file</span><span class="p">.</span><span class="nx">read</span> <span class="nx">bytes</span>
-
-  <span class="nv">char: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Char&quot;</span><span class="p">,</span> <span class="nx">name</span>
-  <span class="nv">uchar: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Char&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nv">unsigned: </span><span class="kc">true</span>
-
-  <span class="nv">bool: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Bool&quot;</span><span class="p">,</span> <span class="nx">name</span>
-
-  <span class="nv">short: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Short&quot;</span><span class="p">,</span> <span class="nx">name</span>
-  <span class="nv">ushort: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Short&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nv">unsigned: </span><span class="kc">true</span>
-
-  <span class="nv">int: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Int&quot;</span><span class="p">,</span> <span class="nx">name</span>
-  <span class="nv">uint: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Int&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nv">unsigned: </span><span class="kc">true</span>
-
-  <span class="nv">long: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Long&quot;</span><span class="p">,</span> <span class="nx">name</span>
-  <span class="nv">ulong: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Long&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nv">unsigned: </span><span class="kc">true</span>
-
-  <span class="nv">longlong: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;LongLong&quot;</span><span class="p">,</span> <span class="nx">name</span>
-  <span class="nv">ulonglong: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;LongLong&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nv">unsigned: </span><span class="kc">true</span>
-
-  <span class="nv">float: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Float&quot;</span><span class="p">,</span> <span class="nx">name</span>
-  <span class="nv">double: </span><span class="nf">(name) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;Double&quot;</span><span class="p">,</span> <span class="nx">name</span>
-
-  <span class="nv">string: </span><span class="nf">(name, opts = {}) -&gt;</span> <span class="nx">@readType</span> <span class="s2">&quot;String&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">opts</span>
-  <span class="nv">stringz: </span><span class="nf">(name, opts = {}) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Aliases</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">int8: </span><span class="nx">Record</span><span class="o">::</span><span class="nx">char</span>
-  <span class="nv">uint8: </span><span class="nx">Record</span><span class="o">::</span><span class="nx">uchar</span>
-  <span class="nv">int16: </span><span class="nx">Record</span><span class="o">::</span><span class="nx">short</span>
-  <span class="nv">uint16: </span><span class="nx">Record</span><span class="o">::</span><span class="nx">ushort</span>
-  <span class="nv">int32: </span><span class="nx">Record</span><span class="o">::</span><span class="nx">int</span>
-  <span class="nv">uint32: </span><span class="nx">Record</span><span class="o">::</span><span class="nx">uint</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
