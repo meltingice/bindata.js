@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/meltingice/bindata.js.png)](http://travis-ci.org/meltingice/bindata.js)
 # BinData.js
 
 BinData.js is a simple and structured way to read and write binary data. Instead of having to remember a whole table of obscure character codes, you can write and encapsulate chunks of binary data together with ease.
